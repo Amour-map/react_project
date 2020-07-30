@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+  </head>
+  <body>
+    <form class="" action="index.html" method="post" id="form1">
+      title: <input type="text" name="title" value="test"><br/>
+      sub_title: <input type="text" name="price" value="111"><br/>
+      features:
+      <input type="text" name="feature_name" value="a"><input type="text" name="feature_value" value="1">
+      <input type="text" name="feature_name" value="a"><input type="text" name="feature_value" value="2">
+      <input type="text" name="feature_name" value="a"><input type="text" name="feature_value" value="3">
+      <br/>
+      description: <input type="text" name="description" value="一些描述文字"><br/>
+      images:<input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value=""><input type="file" name="images" value="">
+
+      <button type="button" id="btn1" name="button">提交</button>
+    </form>
+  </body>
+
+  <script>
+  let oBtn=document.getElementById('btn1');
+  let oForm=document.getElementById('form1');
+
+  oBtn.onclick=async ()=>{
+    let form=new FormData(oForm);
+
+    let res=await fetch('/api/car', {
+      method: 'post',
+      body: form
+    });
+    await res.json();
+  };
+  </script>
+</html>
