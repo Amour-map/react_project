@@ -7,8 +7,33 @@ import fetchJson from "../utils/fetchJson";
 
 class Login extends Component {
   constructor(props) {
+    console.log("构造器执行: constructor");
     super(props);
+    console.log(this.props);
     this.formRef = React.createRef();
+  }
+  componentWillMount() {
+    console.log("即将挂载：componentWillMount");
+  }
+  componentDidMount() {
+    console.log("挂载完成：componentDidMount");
+  }
+  componentWillReceiveProps() {
+    console.log("接收新的props：componentWillReceiveProps");
+  }
+  shouldComponentUpdate() {
+    console.log("是否更新：shouldComponentUpdate");
+    return true;
+  }
+  componentWillUpdate() {
+    console.log(this.props);
+    console.log("即将更新：componentWillUpdate");
+  }
+  componentDidUpdate() {
+    console.log("更新完成：componentDidUpdate");
+  }
+  componentWillUnmount() {
+    console.log("即将卸载：componentWillUnmount");
   }
   async submit() {
     let form = new FormData(this.formRef.current.formRef.current);

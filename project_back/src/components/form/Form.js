@@ -5,9 +5,6 @@ class Form extends Component {
     super(props);
     this.formRef = React.createRef();
   }
-  getFormRefs() {
-    return this.formRef;
-  }
   render() {
     return (
       <>

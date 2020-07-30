@@ -28,24 +28,11 @@ class Banner extends Component {
       alert("请求数据错误，请刷新重试！");
     }
   }
+  // 打开新增页面
   openDialog() {
     this.setState({
       dialogVisable: true
     })
-  }
-  async delete() {
-    let data = await fetchJson("api/banner/5", {
-      method: "DELETE"
-    });
-    console.log(data);
-    await this.getAllCarsInfo();
-  }
-  update() {
-    console.log("修改");
-  }
-  // 取消dialog
-  cancel() {
-    this.setState({dialogVisable: false})
   }
   // 增加车辆信息
   async submit() {
@@ -61,6 +48,22 @@ class Banner extends Component {
     } else {
       alert("添加失败");
     }
+  }
+  // 删除车辆信息
+  async delete() {
+    let data = await fetchJson("api/banner/5", {
+      method: "DELETE"
+    });
+    console.log(data);
+    await this.getAllCarsInfo();
+  }
+  // 修改车辆信息
+  update() {
+    console.log("修改");
+  }
+  // 取消dialog
+  cancel() {
+    this.setState({dialogVisable: false})
   }
   render() {
     return (
