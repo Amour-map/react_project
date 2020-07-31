@@ -24,6 +24,10 @@ router.post('/login', async ctx=>{
   }
 });
 
-
+router.get("/checklogin", async ctx => {
+  if(ctx.checkLogin()) {
+    ctx.body = {ok: true}
+  }
+});
 
 module.exports=router.routes();

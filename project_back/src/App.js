@@ -1,22 +1,34 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
+import { setLoginStatus } from "./store/action";
 import Login from "./pages/Login";
 import Banner from "./pages/Banner";
+import fetchJson from "./utils/fetchJson";
 
 class App extends Component {
   constructor(props) {
     super(props);
   }
-  componentDidMount() {
-    if(sessionStorage.getItem("login")) {
-      this.props.history.push("/");
+  async componentDidMount() {
+    let data = await fetchJson("admin/checklogin");
+    if(!data.ok) {
+      this.props.history.push("/login");
+    } else {
+      this.props.setLoginStatus(true);
+    }
+  }
+  async componentDidUpdate() {
+    let data = await fetchJson("admin/checklogin");
+    if(!data.ok) {
+      this.props.history.push("/login");
+    } else {
+      this.props.setLoginStatus(true);
     }
   }
   render() {
     return (
       <>
-        {this.props.loginInfo ? "" : <Redirect to="/login" />}
         <Route path="/login" component={Login} />
         <Route path="/" exact component={Banner} />
       </>
@@ -24,4 +36,6 @@ class App extends Component {
   }
 }
 
-export default connect((state, props) => Object.assign({}, props, state), {})(App);
+export default connect((state, props) => Object.assign({}, props, state), {
+  setLoginStatus
+})(App);

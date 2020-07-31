@@ -6,11 +6,13 @@ class Form extends Component {
     this.formRef = React.createRef();
   }
   render() {
+    console.log(1)
     return (
       <>
         <form ref={this.formRef}>
           {this.props.fields ? this.props.fields.map((field, index) => {
             let id = "id_"+Math.floor(Math.random()*10000000);
+            console.log(field)
             return (
               <div 
                 className="input-group" 

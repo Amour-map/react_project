@@ -9,7 +9,6 @@ class Login extends Component {
   constructor(props) {
     // console.log("构造器执行: constructor");
     super(props);
-    // console.log(this.props);
     this.formRef = React.createRef();
   }
   // componentWillMount() {
@@ -43,7 +42,6 @@ class Login extends Component {
     });
     if(data.ok) {
       this.props.setLoginStatus(true);
-      sessionStorage.setItem("login", true);
       this.props.history.push("/");
     } else {
       alert("登录失败，请刷新重试")

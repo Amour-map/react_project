@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import { connect } from "react-redux";
 import Table from "../components/table/Table";
 import Dialog from "../components/dialog/Dialog";
+import UpdateForm from "../components/updateForm/UpdateForm";
 import Form from "../components/form/Form";
 import fetchJson from "../utils/fetchJson";
 
@@ -10,9 +11,13 @@ class Banner extends Component {
     super(props);
     this.state = {
       sourceList: [],
-      dialogVisable: false
+      current: 3,
+      updateId: 0,
+      createFormVisible: false,
+      updateFormVisible: false
     }
-    this.formRef = React.createRef();
+    this.createFormRef = React.createRef();
+    this.updateFormRef = React.createRef();
   }
   async componentDidMount() {
     await this.getAllCarsInfo();
@@ -31,12 +36,12 @@ class Banner extends Component {
   // 打开新增页面
   openDialog() {
     this.setState({
-      dialogVisable: true
+      createFormVisible: true
     })
   }
   // 增加车辆信息
   async submit() {
-    let form = new FormData(this.formRef.current.formRef.current);
+    let form = new FormData(this.createFormRef.current.formRef.current);
     let data = await fetchJson("api/banner", {
       method: "POST",
       body: form
@@ -44,7 +49,7 @@ class Banner extends Component {
     if(data.ok) {
       alert("添加成功");
       this.getAllCarsInfo();
-      this.setState({dialogVisable: false});
+      this.setState({createFormVisible: false});
     } else {
       alert("添加失败");
     }
@@ -59,19 +64,28 @@ class Banner extends Component {
   // 修改车辆信息
   async update(id) {
     console.log(id);
-    
-    this.setState({dialogVisable: true});
+    let arr = this.state.sourceList.filter(listItem => listItem.ID === id);
+    console.log(arr[0]);
+    this.setState({
+      updateId: id
+    })
+    this.setState({updateFormVisible: true});
   }
   // 取消dialog
-  cancel() {
-    this.setState({dialogVisable: false});
+  cancelCreateForm() {
+    this.setState({createFormVisible: false});
   }
+  cancelUpdateForm() {
+    this.setState({updateFormVisible: false});
+  } 
+
   render() {
+    let updateItem = this.state.sourceList.filter(listItem => listItem.ID === this.state.updateId)[0];
     return (
       <>
         <Dialog
-          visible={this.state.dialogVisable}
-          onCancel={this.cancel.bind(this)}
+          visible={this.state.createFormVisible}
+          onCancel={this.cancelCreateForm.bind(this)}
           width="500"
           title="新增车辆信息"
           modal={true}
@@ -81,15 +95,56 @@ class Banner extends Component {
           <Form
             width="400"
             fields={[
-              {type: "text", id: "title", name: "title", placeholder: "请输入车辆名称", label: "车辆名称："},
-              {type: "text", id: "sub_title", name: "sub_title", placeholder: "请输入车辆类型", label: "车辆类型："},
-              {type: "file", id: "image", name: "image", placeholder: "请选择车辆图片", label: "车辆图片："}
+              {type: "text", name: "title", placeholder: "请输入车辆名称", label: "车辆名称："},
+              {type: "text", name: "sub_title", placeholder: "请输入车辆类型", label: "车辆类型："},
+              {type: "file", name: "image", placeholder: "请选择车辆图片", label: "车辆图片："}
             ]}
             btns={[
               {type: "button", value: "确认", onClick: this.submit.bind(this)},
               {type: "reset", value: "重置"}
             ]}
-            ref={this.formRef}
+            ref={this.createFormRef}
+          />
+        </Dialog>
+        <Dialog
+          visible={this.state.updateFormVisible}
+          onCancel={this.cancelUpdateForm.bind(this)}
+          width="500"
+          title="修改车辆信息"
+          modal={true}
+          deleteBtn={true}
+          style={{position: "absolute", left: "300px", top: "300px", zIndex: "1000"}}
+        >
+          <UpdateForm
+            width="400"
+            fields={[
+              {
+                type: "text", 
+                name: "title", 
+                placeholder: "请输入车辆名称", 
+                label: "车辆名称：", 
+                value: updateItem ? updateItem.title : ""
+              },
+              {
+                type: "text", 
+                name: "sub_title", 
+                placeholder: "请输入车辆类型", 
+                label: "车辆类型：", 
+                value: updateItem ? updateItem.sub_title : ""
+              },
+              {
+                type: "file", 
+                name: "image", 
+                placeholder: "请选择车辆图片", 
+                label: "车辆图片：", 
+                value: updateItem ? updateItem.image : null
+              }
+            ]}
+            btns={[
+              {type: "button", value: "确认", onClick: this.submit.bind(this)},
+              {type: "reset", value: "重置"}
+            ]}
+            ref={this.updateFormRef}
           />
         </Dialog>
         <Dialog
