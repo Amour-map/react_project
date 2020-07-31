@@ -41,7 +41,7 @@ class Table extends Component {
                         (<button 
                           key={index} 
                           className={option.type ? "btn btn-"+option.type : "btn btn-primary"}
-                          onClick={option.onClick}
+                          onClick={() => option.onClick(listItem.ID)}
                         >
                           {option.value}
                         </button>)

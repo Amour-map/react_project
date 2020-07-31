@@ -50,20 +50,21 @@ class Banner extends Component {
     }
   }
   // 删除车辆信息
-  async delete() {
-    let data = await fetchJson("api/banner/5", {
+  async delete(id) {
+    await fetchJson(`api/banner/${id}`, {
       method: "DELETE"
     });
-    console.log(data);
     await this.getAllCarsInfo();
   }
   // 修改车辆信息
-  update() {
-    console.log("修改");
+  async update(id) {
+    console.log(id);
+    
+    this.setState({dialogVisable: true});
   }
   // 取消dialog
   cancel() {
-    this.setState({dialogVisable: false})
+    this.setState({dialogVisable: false});
   }
   render() {
     return (

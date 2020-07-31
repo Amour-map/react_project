@@ -7,34 +7,34 @@ import fetchJson from "../utils/fetchJson";
 
 class Login extends Component {
   constructor(props) {
-    console.log("构造器执行: constructor");
+    // console.log("构造器执行: constructor");
     super(props);
-    console.log(this.props);
+    // console.log(this.props);
     this.formRef = React.createRef();
   }
-  componentWillMount() {
-    console.log("即将挂载：componentWillMount");
-  }
-  componentDidMount() {
-    console.log("挂载完成：componentDidMount");
-  }
-  componentWillReceiveProps() {
-    console.log("接收新的props：componentWillReceiveProps");
-  }
-  shouldComponentUpdate() {
-    console.log("是否更新：shouldComponentUpdate");
-    return true;
-  }
-  componentWillUpdate() {
-    console.log(this.props);
-    console.log("即将更新：componentWillUpdate");
-  }
-  componentDidUpdate() {
-    console.log("更新完成：componentDidUpdate");
-  }
-  componentWillUnmount() {
-    console.log("即将卸载：componentWillUnmount");
-  }
+  // componentWillMount() {
+  //   console.log("即将挂载：componentWillMount");
+  // }
+  // componentDidMount() {
+  //   console.log("挂载完成：componentDidMount");
+  // }
+  // componentWillReceiveProps() {
+  //   console.log("接收新的props：componentWillReceiveProps");
+  // }
+  // shouldComponentUpdate() {
+  //   console.log("是否更新：shouldComponentUpdate");
+  //   return true;
+  // }
+  // componentWillUpdate() {
+  //   console.log(this.props);
+  //   console.log("即将更新：componentWillUpdate");
+  // }
+  // componentDidUpdate() {
+  //   console.log("更新完成：componentDidUpdate");
+  // }
+  // componentWillUnmount() {
+  //   console.log("即将卸载：componentWillUnmount");
+  // }
   async submit() {
     let form = new FormData(this.formRef.current.formRef.current);
     let data = await fetchJson("admin/login", {
@@ -43,7 +43,8 @@ class Login extends Component {
     });
     if(data.ok) {
       this.props.setLoginStatus(true);
-      this.props.history.push("/banner");
+      sessionStorage.setItem("login", true);
+      this.props.history.push("/");
     } else {
       alert("登录失败，请刷新重试")
       console.log("登录失败，请刷新重试");

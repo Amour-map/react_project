@@ -8,12 +8,17 @@ class App extends Component {
   constructor(props) {
     super(props);
   }
+  componentDidMount() {
+    if(sessionStorage.getItem("login")) {
+      this.props.history.push("/");
+    }
+  }
   render() {
     return (
       <>
-        {this.props.loginInfo ? "" : <Redirect to="/" />}
-        <Route path="/" exact component={Login} />
-        <Route path="/banner" component={Banner} />
+        {this.props.loginInfo ? "" : <Redirect to="/login" />}
+        <Route path="/login" component={Login} />
+        <Route path="/" exact component={Banner} />
       </>
     );
   }
