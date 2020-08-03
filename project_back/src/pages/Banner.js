@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import { connect } from "react-redux";
 import Table from "../components/table/Table";
 import Dialog from "../components/dialog/Dialog";
-import UpdateForm from "../components/updateForm/UpdateForm";
+import Nav from "../components/nav/Nav";
 import Form from "../components/form/Form";
 import fetchJson from "../utils/fetchJson";
 
@@ -13,8 +13,11 @@ class Banner extends Component {
       sourceList: [],
       current: 3,
       updateId: 0,
+      deleteId: 0,
+      defalutValue: {title: "", sub_title: ""},
       createFormVisible: false,
-      updateFormVisible: false
+      updateFormVisible: false,
+      confirmVisable: false
     }
     this.createFormRef = React.createRef();
     this.updateFormRef = React.createRef();
@@ -40,12 +43,15 @@ class Banner extends Component {
     })
   }
   // 增加车辆信息
-  async submit() {
+  async create() {
+    console.log(this.createFormRef.current.getFormRef());
     let form = new FormData(this.createFormRef.current.formRef.current);
+    console.log(this.createFormRef.current)
     let data = await fetchJson("api/banner", {
       method: "POST",
       body: form
     });
+    // console.log(this.updateFormRef.current.formRef.current)
     if(data.ok) {
       alert("添加成功");
       this.getAllCarsInfo();
@@ -56,20 +62,38 @@ class Banner extends Component {
   }
   // 删除车辆信息
   async delete(id) {
-    await fetchJson(`api/banner/${id}`, {
-      method: "DELETE"
+    this.setState({
+      confirmVisable: true,
+      deleteId: id
     });
-    await this.getAllCarsInfo();
   }
   // 修改车辆信息
-  async update(id) {
-    console.log(id);
+  update(id) {
     let arr = this.state.sourceList.filter(listItem => listItem.ID === id);
-    console.log(arr[0]);
     this.setState({
-      updateId: id
-    })
-    this.setState({updateFormVisible: true});
+      updateId: id,
+      updateFormVisible: true,
+      defalutValue: arr[0]
+    });
+  }
+  // 发送修改网络请求
+  async sendUpdate() {
+    let form = new FormData(this.updateFormRef.current.formRef.current);
+    try {
+      let data = await fetchJson(`api/banner/${this.state.updateId}`, {
+        method: "POST",
+        body: form
+      });
+      if(data.ok) {
+        alert("修改成功");
+        this.getAllCarsInfo();
+        this.setState({updateFormVisible: false});
+      } else {
+        alert("修改失败");
+      }
+    } catch (e) {
+      console.log("错误", e);
+    }
   }
   // 取消dialog
   cancelCreateForm() {
@@ -78,11 +102,27 @@ class Banner extends Component {
   cancelUpdateForm() {
     this.setState({updateFormVisible: false});
   } 
-
+  cancelConfirm() {
+    this.setState({confirmVisable: false});
+  }
+  changeTab(index) {
+    if(index === 1) {
+      this.props.history.push("/");
+    } else {
+      this.props.history.push("/car");
+    }
+  }
   render() {
-    let updateItem = this.state.sourceList.filter(listItem => listItem.ID === this.state.updateId)[0];
     return (
       <>
+        <Nav 
+          fields={[
+            {id: 1,text: "焦点图"},
+            {id: 2,text: "车辆管理"}
+          ]}
+          defaultCurrent={1}
+          onChange={(index) => {this.changeTab(index)}}
+        />
         <Dialog
           visible={this.state.createFormVisible}
           onCancel={this.cancelCreateForm.bind(this)}
@@ -100,7 +140,7 @@ class Banner extends Component {
               {type: "file", name: "image", placeholder: "请选择车辆图片", label: "车辆图片："}
             ]}
             btns={[
-              {type: "button", value: "确认", onClick: this.submit.bind(this)},
+              {type: "button", value: "确认", onClick: this.create.bind(this)},
               {type: "reset", value: "重置"}
             ]}
             ref={this.createFormRef}
@@ -115,7 +155,7 @@ class Banner extends Component {
           deleteBtn={true}
           style={{position: "absolute", left: "300px", top: "300px", zIndex: "1000"}}
         >
-          <UpdateForm
+          <Form
             width="400"
             fields={[
               {
@@ -123,29 +163,52 @@ class Banner extends Component {
                 name: "title", 
                 placeholder: "请输入车辆名称", 
                 label: "车辆名称：", 
-                value: updateItem ? updateItem.title : ""
+                defaultValue: this.state.defalutValue.title
               },
               {
                 type: "text", 
                 name: "sub_title", 
                 placeholder: "请输入车辆类型", 
-                label: "车辆类型：", 
-                value: updateItem ? updateItem.sub_title : ""
+                label: "车辆类型：",
+                defaultValue: this.state.defalutValue.sub_title
               },
               {
                 type: "file", 
                 name: "image", 
                 placeholder: "请选择车辆图片", 
-                label: "车辆图片：", 
-                value: updateItem ? updateItem.image : null
+                label: "车辆图片："
               }
             ]}
             btns={[
-              {type: "button", value: "确认", onClick: this.submit.bind(this)},
+              {type: "button", value: "确认", onClick: this.sendUpdate.bind(this)},
               {type: "reset", value: "重置"}
             ]}
             ref={this.updateFormRef}
           />
+        </Dialog>
+        <Dialog
+          width="300"
+          title="确认信息"
+          visible={this.state.confirmVisable}
+          onCancel={this.cancelConfirm.bind(this)}
+          modal={true}
+          style={{position: "absolute", left: "300px", top: "300px", zIndex: "1000"}}
+        >
+          <div className="panel-body">
+            是否确认删除？
+          </div>
+          <div style={{float: "right"}}>
+            <button className="btn btn-warning" onClick={async () => {
+              await fetchJson(`api/banner/${this.state.deleteId}`, {
+                method: "DELETE"
+              });
+              this.setState({
+                confirmVisable: false
+              });
+              await this.getAllCarsInfo();
+            }}>确认</button>&nbsp;
+            <button className="btn btn-default" onClick={() => this.cancelConfirm()}>取消</button>
+          </div>
         </Dialog>
         <Dialog
           width="1200"

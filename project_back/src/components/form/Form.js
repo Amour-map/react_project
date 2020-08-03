@@ -3,13 +3,19 @@ import React, {Component} from "react";
 class Form extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      fields: this.props.fields
+    }
     this.formRef = React.createRef();
+  }
+  getFormRef() {
+    return this.formRef;
   }
   render() {
     return (
       <>
         <form ref={this.formRef}>
-          {this.props.fields ? this.props.fields.map((field, index) => {
+          {this.state.fields ? this.state.fields.map((field, index) => {
             let id = "id_"+Math.floor(Math.random()*10000000);
             return (
               <div 
@@ -20,9 +26,10 @@ class Form extends Component {
                 <label htmlFor={field.id}>{field.label}</label>
                 <input 
                   type={field.type}
+                  defaultValue={field.defaultValue ? field.defaultValue : ""}
                   id={id}
                   name={field.name}
-                  className="form-control" 
+                  className="form-control"
                   placeholder={field.placeholder}
                 />
               </div>
